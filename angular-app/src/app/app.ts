@@ -1,12 +1,16 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common'; // Needed for the tab system
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
 export class App {
-  protected readonly title = signal('angular-app');
+  // This will be your 'Independent Variable' controller [cite: 22]
+  activeTab: string = 'IDLE';
+
+  // You will add your 'Workload' functions here later [cite: 30, 31]
 }
