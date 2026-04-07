@@ -1,1 +1,31 @@
-<h1>hello energy efficiency!</h1>
+<div class="app">
+  <h1 class="app-title">Angular Energy Benchmark</h1>
+  <div class="control-panel">
+    <button class="primary" (click)="handleMount()">
+      {{ rows().length > 0 ? 'Clear' : 'Mount 1,000 Rows' }}
+    </button>
+    <button (click)="handleSort()" [disabled]="rows().length === 0">Sort by Price</button>
+    <button (click)="handleFrequentUpdates()" [disabled]="rows().length === 0">Frequent Updates (10s)</button>
+    <button (click)="handleSwap()" [disabled]="rows().length === 0">Swap All Rows</button>
+    <button (click)="handlePartialUpdate()" [disabled]="rows().length === 0">Partial Update</button>
+  </div>
+  @if (lastResult()) {
+    <div class="results">Last: {{ lastResult() }}</div>
+  }
+  <div class="row-count">{{ rows().length }} rows rendered</div>
+  <div class="data-grid-container">
+    <table class="data-grid">
+      <thead>
+        <tr>
+          <th>ID</th><th>Ticker</th><th>Company</th><th>Price</th>
+          <th>Change</th><th>Change %</th><th>Volume</th><th>Sector</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of rows(); track row.id) {
+          <tr app-row [row]="row" [class.highlighted]="row.highlighted"></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
