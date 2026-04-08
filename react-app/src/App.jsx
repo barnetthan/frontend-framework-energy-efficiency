@@ -89,7 +89,7 @@ function App() {
     <div className="app">
       <h1 className="app-title">React Energy Benchmark</h1>
       <div className="control-panel">
-        <button className="primary" onClick={handleMount}>
+        <button className="primary" id="test-trigger" onClick={handleMount}>
           {rows.length > 0 ? 'Clear' : 'Mount 1,000 Rows'}
         </button>
         <button onClick={handleSort} disabled={rows.length === 0}>Sort by Price</button>
