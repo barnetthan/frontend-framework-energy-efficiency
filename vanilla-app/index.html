@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vanilla Energy Benchmark</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <h1 class="app-title">Vanilla JS Energy Benchmark</h1>
+    <div class="control-panel">
+      <button class="primary" id="btn-mount">Mount 1,000 Rows</button>
+      <button id="btn-sort" disabled>Sort by Price</button>
+      <button id="btn-updates" disabled>Frequent Updates (10s)</button>
+      <button id="btn-swap" disabled>Swap All Rows</button>
+      <button id="btn-partial" disabled>Partial Update</button>
+    </div>
+    <div class="results" id="results" style="display:none;"></div>
+    <div class="row-count" id="row-count">0 rows rendered</div>
+    <div class="data-grid-container">
+      <table class="data-grid">
+        <thead>
+          <tr>
+            <th>ID</th><th>Ticker</th><th>Company</th><th>Price</th>
+            <th>Change</th><th>Change %</th><th>Volume</th><th>Sector</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
