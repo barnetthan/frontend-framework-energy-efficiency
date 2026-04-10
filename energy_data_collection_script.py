@@ -9,8 +9,8 @@ from selenium.webdriver.common.by import By
 # 1. Setup paths
 BASE_DIR = os.getcwd()
 RESULTS_DIR = os.path.join(BASE_DIR, "temp-json-results")
-FRAMEWORK = "vanilla" # react, vue, angular, vanilla
-TEST_TYPE = "mount_only" # mount_only, mount_sort, mount_swap
+FRAMEWORK = "angular" # react, vue, angular, vanilla
+TEST_TYPE = "mount_swap" # mount_only, mount_sort, mount_swap
 CSV_PATH = os.path.join(BASE_DIR, "real-csv-results", FRAMEWORK + "_energy_data_10k_" + TEST_TYPE + ".csv")
 URL = "localhost:3000"
 
@@ -153,6 +153,14 @@ def run_iteration(i):
 
         driver.find_element(By.ID, "btn-mount").click()
         time.sleep(4)  # Workload
+
+        if TEST_TYPE == "mount_sort":
+            driver.find_element(By.ID, "btn-sort").click()
+            time.sleep(3)
+        
+        if TEST_TYPE == "mount_swap":
+            driver.find_element(By.ID, "btn-swap").click()
+            time.sleep(3)
 
         driver.quit()  # Triggers profiler file save
 
