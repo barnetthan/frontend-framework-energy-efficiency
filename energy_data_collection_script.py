@@ -7,13 +7,19 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.by import By
 
 # 1. Setup paths
-BASE_DIR = "/Users/barnetthan/Desktop/frontend-framework-energy-efficiency"
-RESULTS_DIR = os.path.join(BASE_DIR, "results")
-CSV_PATH = os.path.join(BASE_DIR, "react_energy_data.csv")
+BASE_DIR = os.getcwd()
+RESULTS_DIR = os.path.join(BASE_DIR, "temp-json-results")
+FRAMEWORK = "vanilla" # react, vue, angular, vanilla
+TEST_TYPE = "mount_only" # mount_only, mount_sort, mount_swap
+CSV_PATH = os.path.join(BASE_DIR, "real-csv-results", FRAMEWORK + "_energy_data_10k_" + TEST_TYPE + ".csv")
+URL = "localhost:3000"
+
+REAL_RESULTS_DIR = os.path.join(BASE_DIR, "real-csv-results")
 
 if not os.path.exists(RESULTS_DIR):
     os.makedirs(RESULTS_DIR)
-
+if not os.path.exists(REAL_RESULTS_DIR):
+    os.makedirs(REAL_RESULTS_DIR)
 
 def get_all_threads(obj):
     """Recursively collect all thread objects from nested processes."""
@@ -113,14 +119,12 @@ def extract_energy_from_file(file_path):
     # this is the most meaningful number for comparing framework energy usage.
     # Change the label below if you want a different scope.
     target_label = 'web.foreground'
-    result = energy_by_label.get(target_label)
+    result = energy_by_label.get('web.foreground', 0) + energy_by_label.get('web.background', 0)
 
-    if result is None:
-        print(f"  WARNING: '{target_label}' label not found. "
-              f"Available: {list(energy_by_label.keys())}")
-        # Fall back to total across all labels
-        result = sum(energy_by_label.values())
-        print(f"  Falling back to total: {result} µWh")
+    if result == 0:
+        print(f"  WARNING: No web.foreground or web.background energy found. "
+            f"Available labels: {list(energy_by_label.keys())}")
+        return None
 
     return result
 
@@ -141,11 +145,14 @@ def run_iteration(i):
     driver = webdriver.Firefox(options=options)
 
     try:
-        driver.get("http://localhost:3000")
-        time.sleep(3)  # Baseline
+        driver.get(URL)
+        driver.execute_script("window.localStorage.clear();")
+        driver.execute_script("window.sessionStorage.clear();")
+        driver.execute_script("location.reload(true);")
+        time.sleep(1)  # Baseline
 
-        driver.find_element(By.ID, "test-trigger").click()
-        time.sleep(2)  # Workload
+        driver.find_element(By.ID, "btn-mount").click()
+        time.sleep(4)  # Workload
 
         driver.quit()  # Triggers profiler file save
 
@@ -157,7 +164,8 @@ def run_iteration(i):
 
             with open(CSV_PATH, 'a', newline='') as f:
                 writer = csv.writer(f)
-                writer.writerow([i, energy])
+                # writer.writerow([i, energy])
+                writer.writerow([energy])
 
             print(f"Iteration {i}: {energy} µWh saved to CSV.")
             os.remove(full_path)  # Uncomment to delete large JSON after extraction
@@ -170,5 +178,5 @@ def run_iteration(i):
 
 
 # Run the loop
-for i in range(1, 101):
+for i in range(1, 31):
     run_iteration(i)

@@ -1,12 +1,12 @@
 <div class="app">
   <h1 class="app-title">Angular Energy Benchmark</h1>
   <div class="control-panel">
-    <button class="primary" (click)="handleMount()">
-      {{ rows().length > 0 ? 'Clear' : 'Mount 1,000 Rows' }}
+    <button class="primary" (click)="handleMount()" id="btn-mount">
+      {{ rows().length > 0 ? 'Clear' : 'Mount 10,000 Rows' }}
     </button>
-    <button (click)="handleSort()" [disabled]="rows().length === 0">Sort by Price</button>
+    <button (click)="handleSort()" [disabled]="rows().length === 0" id="btn-sort">Sort by Price</button>
     <button (click)="handleFrequentUpdates()" [disabled]="rows().length === 0">Frequent Updates (10s)</button>
-    <button (click)="handleSwap()" [disabled]="rows().length === 0">Swap All Rows</button>
+    <button (click)="handleSwap()" [disabled]="rows().length === 0" id="btn-swap">Swap All Rows</button>
     <button (click)="handlePartialUpdate()" [disabled]="rows().length === 0">Partial Update</button>
   </div>
   @if (lastResult()) {

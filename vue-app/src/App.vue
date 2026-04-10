@@ -1,21 +1,24 @@
 <script setup>
-import { ref, shallowRef } from 'vue';
-import { generateRows, generateUpdateSequence } from './data.js';
-import Row from './components/Row.vue';
+import { ref, shallowRef } from "vue";
+import { generateRows, generateUpdateSequence } from "./data.js";
+import Row from "./components/Row.vue";
 
-// Pre-generate data at module level
-const allRows = generateRows(1000);
-const swapRows = generateRows(1000, 999);
-const updateSequence = generateUpdateSequence(1000, 50, 100);
+// Updated constants for 10,000 rows
+const ROW_COUNT = 10000;
+const allRows = generateRows(ROW_COUNT);
+const swapRows = generateRows(ROW_COUNT, ROW_COUNT - 1);
+
+// Updating 500 rows per tick (5% of the data) for 100 ticks
+const updateSequence = generateUpdateSequence(ROW_COUNT, 500, 100);
 
 const rows = shallowRef([]);
-const lastResult = ref('');
+const lastResult = ref("");
 
 function measureEnd(name) {
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      performance.mark(name + '-end');
-      const m = performance.measure(name, name + '-start', name + '-end');
+      performance.mark(name + "-end");
+      const m = performance.measure(name, name + "-start", name + "-end");
       lastResult.value = `${name}: ${m.duration.toFixed(2)}ms`;
       console.log(`${name}: ${m.duration.toFixed(2)}ms`);
     });
@@ -27,19 +30,19 @@ function handleMount() {
     rows.value = [];
     return;
   }
-  performance.mark('mount-start');
+  performance.mark("mount-start");
   rows.value = allRows;
-  measureEnd('mount');
+  measureEnd("mount");
 }
 
 function handleSort() {
-  performance.mark('sort-start');
+  performance.mark("sort-start");
   rows.value = [...rows.value].sort((a, b) => b.price - a.price);
-  measureEnd('sort');
+  measureEnd("sort");
 }
 
 function handleFrequentUpdates() {
-  performance.mark('updates-start');
+  performance.mark("updates-start");
   let tick = 0;
   const id = setInterval(() => {
     const current = [...rows.value];
@@ -58,8 +61,12 @@ function handleFrequentUpdates() {
       clearInterval(id);
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          performance.mark('updates-end');
-          const m = performance.measure('updates', 'updates-start', 'updates-end');
+          performance.mark("updates-end");
+          const m = performance.measure(
+            "updates",
+            "updates-start",
+            "updates-end",
+          );
           lastResult.value = `updates: ${m.duration.toFixed(2)}ms`;
           console.log(`updates: ${m.duration.toFixed(2)}ms`);
         });
@@ -69,17 +76,17 @@ function handleFrequentUpdates() {
 }
 
 function handleSwap() {
-  performance.mark('swap-start');
+  performance.mark("swap-start");
   rows.value = swapRows;
-  measureEnd('swap');
+  measureEnd("swap");
 }
 
 function handlePartialUpdate() {
-  performance.mark('partial-start');
+  performance.mark("partial-start");
   rows.value = rows.value.map((row, i) =>
-    i % 10 === 0 ? { ...row, highlighted: !row.highlighted } : row
+    i % 10 === 0 ? { ...row, highlighted: !row.highlighted } : row,
   );
-  measureEnd('partial');
+  measureEnd("partial");
 }
 </script>
 
@@ -87,13 +94,21 @@ function handlePartialUpdate() {
   <div class="app">
     <h1 class="app-title">Vue Energy Benchmark</h1>
     <div class="control-panel">
-      <button class="primary" @click="handleMount">
-        {{ rows.length > 0 ? 'Clear' : 'Mount 1,000 Rows' }}
+      <button class="primary" id="btn-mount" @click="handleMount">
+        {{ rows.length > 0 ? "Clear" : "Mount 10,000 Rows" }}
       </button>
-      <button @click="handleSort" :disabled="rows.length === 0">Sort by Price</button>
-      <button @click="handleFrequentUpdates" :disabled="rows.length === 0">Frequent Updates (10s)</button>
-      <button @click="handleSwap" :disabled="rows.length === 0">Swap All Rows</button>
-      <button @click="handlePartialUpdate" :disabled="rows.length === 0">Partial Update</button>
+      <button @click="handleSort" :disabled="rows.length === 0" id="btn-sort">
+        Sort by Price
+      </button>
+      <button @click="handleFrequentUpdates" :disabled="rows.length === 0">
+        Frequent Updates (10s)
+      </button>
+      <button @click="handleSwap" :disabled="rows.length === 0" id="btn-swap">
+        Swap All Rows
+      </button>
+      <button @click="handlePartialUpdate" :disabled="rows.length === 0">
+        Partial Update
+      </button>
     </div>
     <div v-if="lastResult" class="results">Last: {{ lastResult }}</div>
     <div class="row-count">{{ rows.length }} rows rendered</div>
@@ -101,8 +116,14 @@ function handlePartialUpdate() {
       <table class="data-grid">
         <thead>
           <tr>
-            <th>ID</th><th>Ticker</th><th>Company</th><th>Price</th>
-            <th>Change</th><th>Change %</th><th>Volume</th><th>Sector</th>
+            <th>ID</th>
+            <th>Ticker</th>
+            <th>Company</th>
+            <th>Price</th>
+            <th>Change</th>
+            <th>Change %</th>
+            <th>Volume</th>
+            <th>Sector</th>
           </tr>
         </thead>
         <tbody>

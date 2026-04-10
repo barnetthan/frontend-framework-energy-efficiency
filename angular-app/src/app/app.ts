@@ -2,9 +2,13 @@ import { Component, signal } from '@angular/core';
 import { RowComponent } from './row/row';
 import { generateRows, generateUpdateSequence, StockRow } from './data';
 
-const allRows = generateRows(1000);
-const swapRows = generateRows(1000, 999);
-const updateSequence = generateUpdateSequence(1000, 50, 100);
+// Update constants for 10,000 rows
+const ROW_COUNT = 10000;
+const allRows = generateRows(ROW_COUNT);
+const swapRows = generateRows(ROW_COUNT, ROW_COUNT - 1);
+
+// Update 500 rows per tick (5% of the data) over 100 ticks
+const updateSequence = generateUpdateSequence(ROW_COUNT, 500, 100);
 
 @Component({
   selector: 'app-root',
