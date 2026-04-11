@@ -186,5 +186,5 @@ def run_iteration(i):
 
 
 # Run the loop
-for i in range(1, 31):
+for i in range(1, 101):
     run_iteration(i)
